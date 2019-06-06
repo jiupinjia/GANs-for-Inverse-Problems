@@ -1,14 +1,14 @@
 # GANs for Solving Inverse Problems
-The test code for: "Adversarial Training for Solving Inverse Problems".
+Tensorflow implementation for: "Adversarial Training for Solving Inverse Problems". The code was written by [Zhengxia Zou](http://www-personal.umich.edu/~zzhengxi/) (zzhengxi@umich.edu).
 
-Author: zzhengxi@umich.edu
+Inverse problems are a group of important mathematical problems which aim to estimate the causal factors (e.g., the unknown source data x and parameters z) from a set of observations. Most of the recent approaches consider the inverse problem as a prediction of the source data x based on the observation y with the help of pair-wise training supervision while ignoring the physics behind. We re-examine the inverse problem under a totally different point of view, i.e. instead of predicting x directly from y, we learn to predict the parameters z under an adversarial training paradigm so that to shed light on the causal relationship with a clear physical signiﬁcance. In addition, we further consider that if the inverse problem to be solved satisﬁes an “independent and invertible” assumption, the problem can be solved without any help of pair-wise training supervision and the solution is proved to be unique. Our framework can be applied to a wide variety of real world inverse problems.
 
 With this project, you can train a model to solve the following inverse problems:
 - Separating superimposed images on MNIST and CIFAR-10 datasets.
 - Image denoising on MNIST
 - Removing speckle and streak noise in CAPTCHAs
 
-All the above tasks are trained without any help of pair-wise supervision.
+All the above tasks are trained without any help of pair-wise supervision. For more information of this project, please refer to our paper.
 
 
 ## Prerequisites
@@ -23,15 +23,21 @@ All the above tasks are trained without any help of pair-wise supervision.
 
 Train:
 
-    $ python igan.py
+```
+python igan.py
+```
 
 Test:
 
-    $ python deploy.py 
+```
+python deploy.py 
+```
 
 Configurations:
 
-    $ vi initializer.py 
+```
+vi initializer.py 
+```
 
 ## Results
 
