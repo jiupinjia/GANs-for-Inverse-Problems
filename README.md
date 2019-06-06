@@ -11,6 +11,15 @@ With this project, you can train a model to solve the following inverse problems
 All the above tasks are trained without any help of pair-wise supervision. For more information of this project, please refer to our paper.
 
 
+
+## A video demo:
+YouTube video: [Adversarial Training for Solving Inverse Problems](https://www.youtube.com/watch?v=_F8-cyTPENw)
+
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=_F8-cyTPENw
+" target="_blank"><img src="video-demo.png" 
+alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
+
+
 ## Prerequisites
 
 - python 3.5
