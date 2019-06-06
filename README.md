@@ -93,3 +93,5 @@ Some example results of image denoising on MNIST images. Despite the strong nois
 Some example results of image deraining with different methods on the [Image Deraining Dataset](https://arxiv.org/abs/1701.05957): [CycleGAN](https://github.com/junyanz/CycleGAN), and [Pixel-to-Pixel](https://github.com/phillipi/pix2pix) and Ours.
 
 ![](results-derain.jpg)
+
+_"keep Calm and Don't Overfit."_
