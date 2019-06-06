@@ -39,11 +39,14 @@ Configurations:
 
 ![](results-unmixing.jpg)
 
+
 #### Breaking CAPTCHAs
 
 ![](results-captcha.jpg)
 
+
 #### Denoising
 
 ![](results-denoising.jpg)
+
 
