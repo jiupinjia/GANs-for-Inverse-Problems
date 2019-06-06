@@ -17,7 +17,7 @@ YouTube video: [Adversarial Training for Solving Inverse Problems](https://www.y
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=_F8-cyTPENw
 " target="_blank"><img src="video-demo.png" 
-alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
+alt="IMAGE ALT TEXT HERE" width="1920" height="720" border="10" /></a>
 
 
 ## Prerequisites
