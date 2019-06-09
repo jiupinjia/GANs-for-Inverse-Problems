@@ -32,7 +32,7 @@ Params = init.TrainingParamInitialization()
 if os.path.exists(Params.result_dir) is False:
     os.mkdir(Params.result_dir)
 
-if Params.task_name is 'denoising' or 'captcha':
+if Params.task_name in ['denoising', 'captcha']:
     n_channels = 1
 else:
     n_channels = 3

@@ -26,7 +26,7 @@ import initializer as init
 # All parameters used in this script
 Params = init.TrainingParamInitialization()
 
-if Params.task_name is 'denoising' or 'captcha':
+if Params.task_name in ['denoising', 'captcha']:
     n_channels = 1
 else:
     n_channels = 3
