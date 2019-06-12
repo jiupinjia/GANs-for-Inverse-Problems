@@ -23,10 +23,7 @@ class TrainingParamInitialization():
         # choice a task ('unmixing', 'denoising', 'captcha')
         self.task_name = 'captcha'
 
-        # choice a GAN model ('W_GAN', 'LS_GAN', 'Vanilla_GAN')
-        self.gan_model = 'W_GAN'
-
-        self.batch_size = 8  # Batch size for training
+        self.batch_size = 16  # Batch size for training
         self.max_iters = 50000  # Maximum training iterations
         self.with_random_dual_mapping = True  # True or false
 
@@ -35,38 +32,47 @@ class TrainingParamInitialization():
         self.result_dir = 'results'  # Directory name to save the generated images
 
 
-        # defualt image size
         if self.task_name is 'unmixing':
+            # choice a GAN model ('Vanilla_GAN', 'LS_GAN', 'W_GAN')
+            self.gan_model = 'Vanilla_GAN'
+            self.g_learning_rate = 5e-5
+            self.d_learning_rate = 5e-6
+            # self.gan_model = 'LS_GAN'
+            # self.g_learning_rate = 5e-5
+            # self.d_learning_rate = 5e-5
+            # self.gan_model = 'W_GAN'
+            # self.g_learning_rate = 5e-5
+            # self.d_learning_rate = 5e-5
             self.IMG_SIZE = 64  # Image size
             self.D_input_size = 64  # Input image size of the D_1 and D_2
             self.G_input_size = 64  # Output image size of G
+
         elif self.task_name is 'denoising':
-            self.IMG_SIZE = 32  # Image size
-            self.D_input_size = 32  # Input image size of the D_1 and D_2
-            self.G_input_size = 32  # Output image size of G
+            # choice a GAN model ('Vanilla_GAN', 'LS_GAN', 'W_GAN')
+            self.gan_model = 'Vanilla_GAN'
+            self.g_learning_rate = 5e-5
+            self.d_learning_rate = 5e-6
+            # self.gan_model = 'LS_GAN'
+            # self.g_learning_rate = 5e-5
+            # self.d_learning_rate = 5e-5
+            # self.gan_model = 'W_GAN'
+            # self.g_learning_rate = 5e-5
+            # self.d_learning_rate = 5e-5
+            self.IMG_SIZE = 64  # Image size
+            self.D_input_size = 64  # Input image size of the D_1 and D_2
+            self.G_input_size = 64  # Output image size of G
+
         elif self.task_name is 'captcha':
+            # choice a GAN model ('Vanilla_GAN', 'LS_GAN', 'W_GAN')
+            self.gan_model = 'Vanilla_GAN'
+            self.g_learning_rate = 1e-5
+            self.d_learning_rate = 1e-6
+            # self.gan_model = 'LS_GAN'
+            # self.g_learning_rate = 1e-5
+            # self.d_learning_rate = 1e-5
+            # self.gan_model = 'W_GAN'
+            # self.g_learning_rate = 1e-5
+            # self.d_learning_rate = 1e-6
             self.IMG_SIZE = 128  # Image size
             self.D_input_size = 128  # Input image size of the D_1 and D_2
             self.G_input_size = 128  # Output image size of G
-
-
-        # Optimizer initialization
-        if self.gan_model is 'W_GAN':
-            self.d_clip = 0.01
-            self.d_thresh = -5.
-            self.optimizer = 'RMSProp'
-            self.g_learning_rate = 5e-5
-            self.d_learning_rate = 5e-5
-        elif self.gan_model is 'LS_GAN':
-            self.d_clip = 1e9
-            self.d_thresh = 0.1
-            self.optimizer = 'Adam'
-            self.g_learning_rate = 5e-5
-            self.d_learning_rate = 5e-5
-        elif self.gan_model is 'Vanilla_GAN':
-            self.d_clip = 1e9
-            self.d_thresh = 0.5
-            self.optimizer = 'Adam'
-            self.g_learning_rate = 5e-5
-            self.d_learning_rate = 5e-6
-

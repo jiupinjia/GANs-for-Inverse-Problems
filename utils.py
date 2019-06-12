@@ -37,6 +37,8 @@ def get_batch(DATA, batch_size, mode):
         idx = np.random.choice(range(n), batch_size, replace=False)
         batch = DATA['Source1'][idx, :, :, :]
 
+        return batch
+
     if mode is 'Y_domain':
 
         if Params.task_name is 'unmixing':
@@ -67,7 +69,20 @@ def get_batch(DATA, batch_size, mode):
             idx = np.random.choice(range(n), batch_size, replace=False)
             batch = DATA['Source2'][idx, :, :, :]
 
-    return batch
+        return batch
+
+
+    if mode is 'XY_pair':
+
+        if Params.task_name is 'captcha':
+
+            n, h, w, c = DATA['Source2'].shape
+            idx = np.random.choice(range(n), batch_size, replace=False)
+            batch_y = DATA['Source2'][idx, :, :, :]
+            batch_x = DATA['Source1'][idx, :, :, :]
+
+        return batch_x, batch_y
+
 
 
 

@@ -31,6 +31,15 @@ if Params.task_name in ['denoising', 'captcha']:
 else:
     n_channels = 3
 
+if Params.gan_model is 'Vanilla_GAN':
+    d_thresh = 0.5
+elif Params.gan_model is 'LS_GAN':
+    d_thresh = 0.1
+elif Params.gan_model is 'W_GAN':
+    d_thresh = -20
+else:
+    d_thresh = -1e9
+
 input_shape = [None, Params.IMG_SIZE, Params.IMG_SIZE, n_channels]
 Y = tf.placeholder(tf.float32, shape=input_shape)
 X1 = tf.placeholder(tf.float32, shape=input_shape)
@@ -84,7 +93,6 @@ if not os.path.exists(Params.sample_dir):
 # load mnist and cifar images
 data = utils.load_data(is_training=True)
 
-
 g_iter = 0
 d_iter = 0
 D1_loss_val = 0
@@ -96,6 +104,8 @@ while g_iter < Params.max_iters:
     X1_mb = utils.get_batch(data, Params.batch_size, 'X_domain')
     X2_mb = utils.get_batch(data, Params.batch_size, 'X_domain')
     Y_mb = utils.get_batch(data, Params.batch_size, 'Y_domain')
+    # X1_mb, Y_mb = utils.get_batch(data, Params.batch_size, 'XY_pair')
+    # X2_mb = utils.get_batch(data, Params.batch_size, 'X_domain')
 
     _, D1_loss_val, _, summary = sess.run(
         [D1_solver, D1_loss, clip_D1, merged_op],
@@ -110,7 +120,7 @@ while g_iter < Params.max_iters:
     # write states to summary
     summary_writer.add_summary(summary, g_iter)
 
-    if D1_loss_val < Params.d_thresh or D2_loss_val < Params.d_thresh:
+    if D1_loss_val < d_thresh or D2_loss_val < d_thresh:
         mm = mm + 5
     else:
         mm = 1
@@ -120,6 +130,8 @@ while g_iter < Params.max_iters:
         X1_mb = utils.get_batch(data, Params.batch_size, 'X_domain')
         X2_mb = utils.get_batch(data, Params.batch_size, 'X_domain')
         Y_mb = utils.get_batch(data, Params.batch_size, 'Y_domain')
+        # X1_mb, Y_mb = utils.get_batch(data, Params.batch_size, 'XY_pair')
+        # X2_mb = utils.get_batch(data, Params.batch_size, 'X_domain')
 
         _, G_loss_val, D1_loss_val, D2_loss_val = sess.run(
             [G_solver, G_loss, D1_loss, D2_loss],
@@ -133,17 +145,17 @@ while g_iter < Params.max_iters:
 
             save_path = os.path.join(
                 Params.sample_dir, '{}_output_x.png'.format(str(g_iter).zfill(5)))
-            plt.imsave(save_path, utils.plot2x2(output_x), vmin=0, vmax=1.)
+            plt.imsave(save_path, utils.plot2x2(output_x))
 
             save_path = os.path.join(
                 Params.sample_dir, '{}_output_z.png'.format(str(g_iter).zfill(5)))
-            plt.imsave(save_path, utils.plot2x2(output_z), vmin=0, vmax=1.)
+            plt.imsave(save_path, utils.plot2x2(output_z))
 
             save_path = os.path.join(
                 Params.sample_dir, '{}_input_y.png'.format(str(g_iter).zfill(5)))
             if Params.task_name is 'unmixing':
                 Y_mb = Y_mb/Y_mb.max()
-            plt.imsave(save_path, utils.plot2x2(Y_mb), vmin=0, vmax=1.)
+            plt.imsave(save_path, utils.plot2x2(Y_mb))
 
         if g_iter % 20 == 0:
             print('D1_loss = %g, D2_loss = %g, G_loss = %g' %

@@ -23,7 +23,6 @@ import initializer as init
 Params = init.TrainingParamInitialization()
 
 
-
 def generator(Y, is_training):
 
     # define the number of filters in each conv layer
@@ -35,7 +34,6 @@ def generator(Y, is_training):
         n_channels = 3
 
     G_input_size = Params.G_input_size
-
 
     with tf.variable_scope('G_scope'):
         with slim.arg_scope([slim.conv2d], padding='SAME',
@@ -92,12 +90,14 @@ def generator(Y, is_training):
             if Params.task_name in ['unmixing', 'denoising']:
                 net_d_4 = net_d_4 + tf.reduce_mean(Y_, axis=-1, keepdims=True)
 
-            net_d_5 = slim.repeat(
-                net_d_4, 2, slim.conv2d, mm, [4, 4], scope='d_conv5')
+            if Params.task_name in ['unmixing', 'captcha']:
+                net_d_4 = slim.repeat(
+                    net_d_4, 2, slim.conv2d, mm, [4, 4], scope='d_conv5')
 
-            F_ = slim.conv2d(net_d_5, n_channels, [4, 4], activation_fn=tf.nn.relu)
+            F_ = slim.conv2d(net_d_4, n_channels, [4, 4], activation_fn=tf.nn.relu)
             F_ = tf.image.resize_images(
-                images=F_, size=[Params.IMG_SIZE, Params.IMG_SIZE])
+                images=F_, size=[Params.IMG_SIZE, Params.IMG_SIZE],
+                method=tf.image.ResizeMethod.BICUBIC)
 
             if Params.task_name is 'denoising':
                 Z = Y_ - F_
@@ -126,11 +126,20 @@ def discriminator1(x, is_training, reuse=False):
                 images=x, size=[Params.D_input_size, Params.D_input_size])
 
             net = slim.conv2d(x, 32, [4, 4], stride=2)
-            net = slim.conv2d(net, 64, [4, 4], stride=2)
-            net = slim.conv2d(net, 128, [4, 4], stride=2)
-            net = slim.conv2d(net, 256, [4, 4], stride=2)
-            net = slim.flatten(net)
 
+            net = slim.repeat(
+                net, 2, slim.conv2d, 64, [4, 4], scope='conv2')
+            net = slim.conv2d(net, 64, [4, 4], stride=2)
+
+            net = slim.repeat(
+                net, 2, slim.conv2d, 128, [4, 4], scope='conv3')
+            net = slim.conv2d(net, 128, [4, 4], stride=2)
+
+            net = slim.repeat(
+                net, 2, slim.conv2d, 256, [4, 4], scope='conv4')
+            net = slim.conv2d(net, 256, [4, 4], stride=2)
+
+            net = slim.flatten(net)
             D_logit = slim.fully_connected(net, 1, activation_fn=None)
             D_prob = tf.nn.sigmoid(D_logit)
 
@@ -155,16 +164,24 @@ def discriminator2(x, is_training, reuse=False):
                 images=x, size=[Params.D_input_size, Params.D_input_size])
 
             net = slim.conv2d(x, 32, [4, 4], stride=2)
-            net = slim.conv2d(net, 64, [4, 4], stride=2)
-            net = slim.conv2d(net, 128, [4, 4], stride=2)
-            net = slim.conv2d(net, 256, [4, 4], stride=2)
-            net = slim.flatten(net)
 
+            net = slim.repeat(
+                net, 2, slim.conv2d, 64, [4, 4], scope='conv2')
+            net = slim.conv2d(net, 64, [4, 4], stride=2)
+
+            net = slim.repeat(
+                net, 2, slim.conv2d, 128, [4, 4], scope='conv3')
+            net = slim.conv2d(net, 128, [4, 4], stride=2)
+
+            net = slim.repeat(
+                net, 2, slim.conv2d, 256, [4, 4], scope='conv4')
+            net = slim.conv2d(net, 256, [4, 4], stride=2)
+
+            net = slim.flatten(net)
             D_logit = slim.fully_connected(net, 1, activation_fn=None)
             D_prob = tf.nn.sigmoid(D_logit)
 
     return D_logit, D_prob
-
 
 
 
@@ -246,6 +263,13 @@ def compute_loss(D1_logits_real, D1_prob_real,
 
 def initilize_solvers(D1_loss, D2_loss, G_loss, D_steps, G_steps):
 
+    if Params.gan_model is 'W_GAN':
+        optimizer = 'RMSProp'
+        d_clip = 0.01
+    else: # Vanilla_GAN or LS_GAN
+        optimizer = 'Adam'
+        d_clip = 1e9
+
     tvars = tf.trainable_variables()
     theta_D1 = [var for var in tvars if 'D1_scope' in var.name]
     theta_D2 = [var for var in tvars if 'D2_scope' in var.name]
@@ -253,7 +277,7 @@ def initilize_solvers(D1_loss, D2_loss, G_loss, D_steps, G_steps):
 
     with tf.variable_scope(tf.get_variable_scope(), reuse=tf.AUTO_REUSE) as scope:
 
-        if Params.optimizer is 'RMSProp':
+        if optimizer is 'RMSProp':
             update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
             with tf.control_dependencies([tf.group(*update_ops)]):
                 D1_solver = (tf.train.RMSPropOptimizer(
@@ -266,7 +290,7 @@ def initilize_solvers(D1_loss, D2_loss, G_loss, D_steps, G_steps):
                     learning_rate=Params.g_learning_rate).minimize(
                     G_loss, var_list=theta_G, global_step=G_steps))
 
-        if Params.optimizer is 'Adam':
+        if optimizer is 'Adam':
             update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
             with tf.control_dependencies([tf.group(*update_ops)]):
                 D1_solver = (tf.train.AdamOptimizer(
@@ -279,9 +303,9 @@ def initilize_solvers(D1_loss, D2_loss, G_loss, D_steps, G_steps):
                     learning_rate=Params.g_learning_rate).minimize(
                     G_loss, var_list=theta_G, global_step=G_steps))
 
-        clip_D1 = [p.assign(tf.clip_by_value(p, -Params.d_clip, Params.d_clip))
+        clip_D1 = [p.assign(tf.clip_by_value(p, -d_clip, d_clip))
                    for p in theta_D1]
-        clip_D2 = [p.assign(tf.clip_by_value(p, -Params.d_clip, Params.d_clip))
+        clip_D2 = [p.assign(tf.clip_by_value(p, -d_clip, d_clip))
                    for p in theta_D2]
 
     return D1_solver, D2_solver, G_solver, clip_D1, clip_D2
