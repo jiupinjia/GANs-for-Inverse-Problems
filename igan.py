@@ -36,7 +36,7 @@ if Params.gan_model is 'Vanilla_GAN':
 elif Params.gan_model is 'LS_GAN':
     d_thresh = 0.1
 elif Params.gan_model is 'W_GAN':
-    d_thresh = -20
+    d_thresh = -5
 else:
     d_thresh = -1e9
 
@@ -104,8 +104,6 @@ while g_iter < Params.max_iters:
     X1_mb = utils.get_batch(data, Params.batch_size, 'X_domain')
     X2_mb = utils.get_batch(data, Params.batch_size, 'X_domain')
     Y_mb = utils.get_batch(data, Params.batch_size, 'Y_domain')
-    # X1_mb, Y_mb = utils.get_batch(data, Params.batch_size, 'XY_pair')
-    # X2_mb = utils.get_batch(data, Params.batch_size, 'X_domain')
 
     _, D1_loss_val, _, summary = sess.run(
         [D1_solver, D1_loss, clip_D1, merged_op],
@@ -130,8 +128,6 @@ while g_iter < Params.max_iters:
         X1_mb = utils.get_batch(data, Params.batch_size, 'X_domain')
         X2_mb = utils.get_batch(data, Params.batch_size, 'X_domain')
         Y_mb = utils.get_batch(data, Params.batch_size, 'Y_domain')
-        # X1_mb, Y_mb = utils.get_batch(data, Params.batch_size, 'XY_pair')
-        # X2_mb = utils.get_batch(data, Params.batch_size, 'X_domain')
 
         _, G_loss_val, D1_loss_val, D2_loss_val = sess.run(
             [G_solver, G_loss, D1_loss, D2_loss],
