@@ -250,6 +250,7 @@ class ImageCaptcha(_Captcha):
             self.create_noise_curve(img_ns, color)
         if smooth:
             img_ns = img_ns.filter(ImageFilter.SMOOTH)
+            im = im.filter(ImageFilter.SMOOTH)
         return im, img_ns
 
 
