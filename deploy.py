@@ -32,7 +32,7 @@ Params = init.TrainingParamInitialization()
 if os.path.exists(Params.result_dir) is False:
     os.mkdir(Params.result_dir)
 
-if Params.task_name in ['denoising', 'captcha']:
+if Params.task_name in ['unmixing_mnist_mnist', 'denoising', 'captcha']:
     n_channels = 1
 else:
     n_channels = 3
@@ -54,7 +54,9 @@ if not os.path.exists(Params.result_dir):
 
 m_test_samples = 1000
 
-if Params.task_name is 'unmixing':
+
+
+if Params.task_name is 'unmixing_mnist_cifar':
 
     data_cifar = utils.load_and_resize_cifar10_data(is_training=False)
     data_mnist = utils.load_and_resize_mnist_data(is_training=False)
@@ -94,6 +96,42 @@ if Params.task_name is 'unmixing':
         plt.imsave(save_path, img_cifar)
 
         print('processing %d-th image...' % i)
+
+
+
+if Params.task_name is 'unmixing_mnist_mnist':
+
+    data_mnist = utils.load_and_resize_mnist_data(is_training=False)
+
+    for i in range(m_test_samples):
+
+        img_mnist_1 = data_mnist[i,:,:,:]
+        img_mnist_2 = data_mnist[-i,:,:,:]
+
+        img_mixed = img_mnist_1 + img_mnist_2
+
+        img_mixed_ = np.expand_dims(img_mixed, axis=0)
+
+        z_output = sess.run(Z, feed_dict={Y: img_mixed_})
+        x_output = img_mixed_ - z_output
+        x_output = x_output[0,:,:,0]
+        z_output = z_output[0,:,:,0]
+        img_mixed = img_mixed_[0,:,:,0]
+
+        save_path = os.path.join(
+            Params.result_dir, '{}_img_mixed.png'.format(str(i).zfill(5)))
+        plt.imsave(save_path, img_mixed/img_mixed.max())
+
+        save_path = os.path.join(
+            Params.result_dir, '{}_mnist_output_1.png'.format(str(i).zfill(5)))
+        plt.imsave(save_path, z_output)
+
+        save_path = os.path.join(
+            Params.result_dir, '{}_mnist_output_2.png'.format(str(i).zfill(5)))
+        plt.imsave(save_path, x_output)
+
+        print('processing %d-th image...' % i)
+
 
 
 if Params.task_name is 'denoising':

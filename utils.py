@@ -41,7 +41,7 @@ def get_batch(DATA, batch_size, mode):
 
     if mode is 'Y_domain':
 
-        if Params.task_name is 'unmixing':
+        if Params.task_name in ['unmixing_mnist_cifar', 'unmixing_mnist_mnist']:
 
             n, h, w, c = DATA['Source1'].shape
             idx = np.random.choice(range(n), batch_size, replace=False)
@@ -72,25 +72,13 @@ def get_batch(DATA, batch_size, mode):
         return batch
 
 
-    if mode is 'XY_pair':
-
-        if Params.task_name is 'captcha':
-
-            n, h, w, c = DATA['Source2'].shape
-            idx = np.random.choice(range(n), batch_size, replace=False)
-            batch_y = DATA['Source2'][idx, :, :, :]
-            batch_x = DATA['Source1'][idx, :, :, :]
-
-        return batch_x, batch_y
-
-
 
 
 def plot2x2(samples):
 
     IMG_SIZE = samples.shape[1]
 
-    if Params.task_name is 'denoising':
+    if Params.task_name in ['unmixing_mnist_mnist', 'denoising']:
         n_channels = 1
     else:
         n_channels = 3
@@ -144,7 +132,7 @@ def load_and_resize_mnist_data(is_training):
 
     m = data.shape[0]
     data = np.reshape(data, [m, 28, 28])
-    if Params.task_name is 'denoising':
+    if Params.task_name in ['unmixing_mnist_mnist', 'denoising']:
         n_channels = 1
     else:
         n_channels = 3
@@ -153,7 +141,7 @@ def load_and_resize_mnist_data(is_training):
     for i in range(m):
         img = data[i, :, :]
         img_rs = cv2.resize(img, dsize=(Params.IMG_SIZE, Params.IMG_SIZE))
-        if Params.task_name is 'denoising':
+        if Params.task_name in ['unmixing_mnist_mnist', 'denoising']:
             img_rs = np.expand_dims(img_rs, axis=-1)
         else:
             img_rs = np.stack([img_rs, img_rs, img_rs], axis=-1)
@@ -239,12 +227,18 @@ def load_data(is_training):
 
     DATA = {'Source1': 0, 'Source2': 0}
 
-    if Params.task_name is 'unmixing':
+    if Params.task_name is 'unmixing_mnist_cifar':
         print('loading cifar10 data...')
         data_cifar10 = load_and_resize_cifar10_data(is_training=is_training)
         print('loading mnist data...')
         data_mnist = load_and_resize_mnist_data(is_training=is_training)
         DATA['Source1'] = data_cifar10
+        DATA['Source2'] = data_mnist
+
+    if Params.task_name is 'unmixing_mnist_mnist':
+        print('loading mnist data...')
+        data_mnist = load_and_resize_mnist_data(is_training=is_training)
+        DATA['Source1'] = data_mnist
         DATA['Source2'] = data_mnist
 
     if Params.task_name is 'denoising':

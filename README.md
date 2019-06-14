@@ -16,7 +16,7 @@ All the above tasks are trained without any help of pair-wise supervision. For m
 YouTube video: [Adversarial Training for Solving Inverse Problems](https://www.youtube.com/watch?v=_F8-cyTPENw)
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=_F8-cyTPENw
-" target="_blank"><img src="video-demo.png" 
+" target="_blank"><img src="imgs/video-demo.png" 
 alt="IMAGE ALT TEXT HERE" width="720" height="270" border="10" /></a>
 
 
@@ -54,7 +54,7 @@ vi initializer.py
 
 An illustration of the training process of our method on two groups of 2D data: 1) Gaussian data, and 2) Banana data. Our method aims to learn an invertible mapping (Afﬁne transformation) for each data point so that to map green cluster to the red and inversely map the red to the green.  No pair-wise supervision is provided during the training.
 
-![](results-toy-example.jpg)
+![](imgs/results-toy-example.jpg)
 
 
 
@@ -62,7 +62,11 @@ An illustration of the training process of our method on two groups of 2D data: 
 
 Some example results of superimposed image separation by using our method on MNIST and CIFAR-10 datasets. No pair-wise supervision is used during the training.
 
-![](results-unmixing.jpg)
+![](imgs/results-unmixing-mnist-cifar.jpg)
+
+
+
+![](imgs/results-unmixing-mnist-mnist.jpg)
 
 
 
@@ -70,13 +74,13 @@ Some example results of superimposed image separation by using our method on MNI
 
 Some example results of undetermined BBS for CAPTCHA images by using our method. No pair-wise supervision is used during the training.
 
-![](results-captcha.jpg)
+![](imgs/results-captcha.jpg)
 
 
 
 Some example results of undetermined BSS for speech signals by using our method. Each audio CAPTCHA fragment consists of 4 random pieces of the human voice and is about 2.5 seconds long (8kHz). No pair-wise supervision is used during the training.
 
-![](results-audio.jpg)
+![](imgs/results-audio.jpg)
 
 
 
@@ -84,7 +88,7 @@ Some example results of undetermined BSS for speech signals by using our method.
 
 Some example results of image denoising on MNIST images. Despite the strong noise (PSNR less than 0.01 dB), our method sill nicely recovers the clear image. No pair-wise supervision is used during the training.
 
-![](results-denoising.jpg)
+![](imgs/results-denoising.jpg)
 
 
 
@@ -92,6 +96,11 @@ Some example results of image denoising on MNIST images. Despite the strong nois
 
 Some example results of image deraining with different methods on the [Image Deraining Dataset](https://arxiv.org/abs/1701.05957): [CycleGAN](https://github.com/junyanz/CycleGAN), and [Pixel-to-Pixel](https://github.com/phillipi/pix2pix) and Ours.
 
-![](results-derain.jpg)
+![](imgs/results-derain.jpg)
+
+
+
+
 
 _"keep Calm and Don't Overfit."_
+

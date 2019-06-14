@@ -20,25 +20,37 @@ class TrainingParamInitialization():
 
     def __init__(self):
 
-        # choice a task ('unmixing', 'denoising', 'captcha')
-        self.task_name = 'unmixing'
+        # choice a task from the following options:
+        # 'unmixing_mnist_cifar'
+        # 'unmixing_mnist_mnist'
+        # 'denoising'
+        # 'captcha'
+        self.task_name = 'unmixing_mnist_cifar'
 
-        # choice a GAN model ('Vanilla_GAN', 'LS_GAN', 'W_GAN')
+        # choice a GAN model from the following options:
+        # 'Vanilla_GAN'
+        # 'LS_GAN'
+        # 'W_GAN'
         self.gan_model = 'Vanilla_GAN'
 
         self.batch_size = 8  # Batch size for training
         self.max_iters = 10000  # Maximum training iterations
         self.with_random_dual_mapping = True  # True or false
 
-        self.checkpoint_dir = 'checkpoints'  # Directory name to save the checkpoints
-        self.sample_dir = 'samples'  # Directory name to save the samples on training
-        self.result_dir = 'results'  # Directory name to save the generated images
+        self.checkpoint_dir = 'checkpoints'  # Directory to save the checkpoints
+        self.sample_dir = 'samples'  # Directory to save the samples on training
+        self.result_dir = 'results'  # Directory to save the generated images
 
         # set image size
-        if self.task_name is 'unmixing':
+        if self.task_name is 'unmixing_mnist_cifar':
             self.IMG_SIZE = 64  # Image size
             self.D_input_size = 64  # Input image size of the D_1 and D_2
             self.G_input_size = 64  # Output image size of G
+        if self.task_name is 'unmixing_mnist_mnist':
+            self.IMG_SIZE = 64  # Image size
+            self.D_input_size = 64  # Input image size of the D_1 and D_2
+            self.G_input_size = 64  # Output image size of G
+            self.max_iters = 120000  # Need more training iters
         elif self.task_name is 'denoising':
             self.IMG_SIZE = 64  # Image size
             self.D_input_size = 64  # Input image size of the D_1 and D_2

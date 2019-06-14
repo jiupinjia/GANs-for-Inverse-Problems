@@ -28,7 +28,9 @@ def generator(Y, is_training):
     # define the number of filters in each conv layer
     mm = 64
 
-    if Params.task_name in ['denoising', 'captcha']:
+    if Params.task_name in ['unmixing_mnist_mnist',
+                            'denoising',
+                            'captcha']:
         n_channels = 1
     else:
         n_channels = 3
@@ -87,10 +89,14 @@ def generator(Y, is_training):
             net_d_4 = tf.image.resize_images(
                 images=net_d_4, size=[int(G_input_size), int(G_input_size)])
 
-            if Params.task_name in ['unmixing', 'denoising']:
+            if Params.task_name in ['unmixing_mnist_cifar',
+                                    'unmixing_mnist_mnist',
+                                    'denoising']:
                 net_d_4 = net_d_4 + tf.reduce_mean(Y_, axis=-1, keepdims=True)
 
-            if Params.task_name in ['unmixing', 'captcha']:
+            if Params.task_name in ['unmixing_mnist_cifar',
+                                    'unmixing_mnist_mnist',
+                                    'captcha']:
                 net_d_4 = slim.repeat(
                     net_d_4, 2, slim.conv2d, mm, [4, 4], scope='d_conv5')
 
