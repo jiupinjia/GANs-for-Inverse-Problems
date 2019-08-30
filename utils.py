@@ -3,16 +3,13 @@ The test code for:
 "Adversarial Training for Solving Inverse Problems"
 using Tensorflow.
 
-Author: Zhengxia Zou (zzhengxi@umich.edu)
-
 With this project, you can train a model to solve the following
 inverse problems:
 - on MNIST and CIFAR-10 datasets for separating superimposed images.
 - image denoising on MNIST
 - remove speckle and streak noise in CAPTCHAs
-All the above tasks are trained without any help of pair-wise supervision.
+All the above tasks are trained w/ or w/o the help of pair-wise supervision.
 
-Jun., 2019
 """
 
 import numpy as np
@@ -53,6 +50,8 @@ def get_batch(DATA, batch_size, mode):
             z = DATA['Source2'][idx, :, :, :]
             batch = batch + z
 
+            return batch
+
         if Params.task_name is 'denoising':
 
             n, h, w, c = DATA['Source2'].shape
@@ -63,13 +62,50 @@ def get_batch(DATA, batch_size, mode):
             z = 1.0 * np.random.randn(batch_size, h, w, c)
             batch = batch + z
 
+            return batch
+
         if Params.task_name is 'captcha':
 
             n, h, w, c = DATA['Source2'].shape
             idx = np.random.choice(range(n), batch_size, replace=False)
             batch = DATA['Source2'][idx, :, :, :]
 
-        return batch
+            return batch
+
+
+
+    if mode is 'XY_pair':
+
+        if Params.task_name in ['unmixing_mnist_cifar', 'unmixing_mnist_mnist']:
+            n, h, w, c = DATA['Source1'].shape
+            idx = np.random.choice(range(n), batch_size, replace=False)
+            batch = DATA['Source1'][idx, :, :, :]
+
+            # # image mixture
+            n, h, w, c = DATA['Source2'].shape
+            idx = np.random.choice(range(n), batch_size, replace=False)
+            z = DATA['Source2'][idx, :, :, :]
+
+            return batch, batch + z
+
+        if Params.task_name is 'denoising':
+            n, h, w, c = DATA['Source2'].shape
+            idx = np.random.choice(range(n), batch_size, replace=False)
+            batch = DATA['Source2'][idx, :, :, :]
+
+            # # add noise
+            z = 1.0 * np.random.randn(batch_size, h, w, c)
+
+            return batch, batch + z
+
+        if Params.task_name is 'captcha':
+            n, h, w, c = DATA['Source2'].shape
+            idx = np.random.choice(range(n), batch_size, replace=False)
+            batch_x = DATA['Source1'][idx, :, :, :]
+            batch_y = DATA['Source2'][idx, :, :, :]
+
+            return batch_x, batch_y
+
 
 
 

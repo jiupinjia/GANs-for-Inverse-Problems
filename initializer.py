@@ -3,16 +3,13 @@ The test code for:
 "Adversarial Training for Solving Inverse Problems"
 using Tensorflow.
 
-Author: Zhengxia Zou (zzhengxi@umich.edu)
-
 With this project, you can train a model to solve the following
 inverse problems:
 - on MNIST and CIFAR-10 datasets for separating superimposed images.
 - image denoising on MNIST
 - remove speckle and streak noise in CAPTCHAs
-All the above tasks are trained without any help of pair-wise supervision.
+All the above tasks are trained w/ or w/o the help of pair-wise supervision.
 
-Jun., 2019
 """
 
 class TrainingParamInitialization():
@@ -35,7 +32,8 @@ class TrainingParamInitialization():
 
         self.batch_size = 8  # Batch size for training
         self.max_iters = 10000  # Maximum training iterations
-        self.with_random_dual_mapping = True  # True or false
+        self.with_random_dual_mapping = True  # True or False
+        self.with_paired_loss = False  # True or False
 
         self.checkpoint_dir = 'checkpoints'  # Directory to save the checkpoints
         self.sample_dir = 'samples'  # Directory to save the samples on training

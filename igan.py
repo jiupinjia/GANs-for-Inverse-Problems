@@ -3,16 +3,13 @@ The test code for:
 "Adversarial Training for Solving Inverse Problems"
 using Tensorflow.
 
-Author: Zhengxia Zou (zzhengxi@umich.edu)
-
 With this project, you can train a model to solve the following
 inverse problems:
 - on MNIST and CIFAR-10 datasets for separating superimposed images.
 - image denoising on MNIST
 - remove speckle and streak noise in CAPTCHAs
-All the above tasks are trained without any help of pair-wise supervision.
+All the above tasks are trained w/ or w/o the help of pair-wise supervision.
 
-Jun., 2019
 """
 
 import tensorflow as tf
@@ -48,6 +45,7 @@ X2 = tf.placeholder(tf.float32, shape=input_shape)
 # build the graph
 Z = model.generator(Y, is_training=True)
 X_gen = Y - Z
+X_gen = tf.clip_by_value(X_gen, clip_value_min=0, clip_value_max=1e9)
 Y_gen = X2 + Z
 D1_logits_real, D1_prob_real = model.discriminator1(
     X1, is_training=True)
@@ -58,11 +56,17 @@ D1_logits_fake, D1_prob_fake = model.discriminator1(
 D2_logits_fake, D2_prob_fake = model.discriminator2(
     Y_gen, is_training=True, reuse=True)
 
+# With pair-wise loss?
+if Params.with_paired_loss:
+    L2loss = model.cpt_paired_loss(X_gen, X1, Y)
+else:
+    L2loss = 0.
+
 # compute the loss
 D1_loss, D2_loss, G_loss = model.compute_loss(
     D1_logits_real, D1_prob_real, D2_logits_real, D2_prob_real,
     D1_logits_fake, D1_prob_fake, D2_logits_fake, D2_prob_fake)
-
+G_loss = G_loss + L2loss
 
 # to record the iteration number
 G_steps = tf.Variable(
@@ -101,9 +105,12 @@ mm = 1
 
 while g_iter < Params.max_iters:
 
-    X1_mb = utils.get_batch(data, Params.batch_size, 'X_domain')
+    if Params.with_paired_loss:
+        X1_mb, Y_mb = utils.get_batch(data, Params.batch_size, 'XY_pair')
+    else:
+        X1_mb = utils.get_batch(data, Params.batch_size, 'X_domain')
+        Y_mb = utils.get_batch(data, Params.batch_size, 'Y_domain')
     X2_mb = utils.get_batch(data, Params.batch_size, 'X_domain')
-    Y_mb = utils.get_batch(data, Params.batch_size, 'Y_domain')
 
     _, D1_loss_val, _, summary = sess.run(
         [D1_solver, D1_loss, clip_D1, merged_op],
@@ -125,9 +132,12 @@ while g_iter < Params.max_iters:
 
     for _ in range(mm):
 
-        X1_mb = utils.get_batch(data, Params.batch_size, 'X_domain')
+        if Params.with_paired_loss:
+            X1_mb, Y_mb = utils.get_batch(data, Params.batch_size, 'XY_pair')
+        else:
+            X1_mb = utils.get_batch(data, Params.batch_size, 'X_domain')
+            Y_mb = utils.get_batch(data, Params.batch_size, 'Y_domain')
         X2_mb = utils.get_batch(data, Params.batch_size, 'X_domain')
-        Y_mb = utils.get_batch(data, Params.batch_size, 'Y_domain')
 
         _, G_loss_val, D1_loss_val, D2_loss_val = sess.run(
             [G_solver, G_loss, D1_loss, D2_loss],

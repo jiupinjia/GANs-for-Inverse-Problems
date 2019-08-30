@@ -3,16 +3,13 @@ The test code for:
 "Adversarial Training for Solving Inverse Problems"
 using Tensorflow.
 
-Author: Zhengxia Zou (zzhengxi@umich.edu)
-
 With this project, you can train a model to solve the following
 inverse problems:
 - on MNIST and CIFAR-10 datasets for separating superimposed images.
 - image denoising on MNIST
 - remove speckle and streak noise in CAPTCHAs
-All the above tasks are trained without any help of pair-wise supervision.
+All the above tasks are trained w/ or w/o the help of pair-wise supervision.
 
-Jun., 2019
 """
 
 import tensorflow as tf
@@ -114,21 +111,34 @@ if Params.task_name is 'unmixing_mnist_mnist':
 
         z_output = sess.run(Z, feed_dict={Y: img_mixed_})
         x_output = img_mixed_ - z_output
+
+        x_output[x_output<0] = 0
+
         x_output = x_output[0,:,:,0]
         z_output = z_output[0,:,:,0]
         img_mixed = img_mixed_[0,:,:,0]
+        img_mnist_1 = img_mnist_1[:,:,0]
+        img_mnist_2 = img_mnist_2[:,:,0]
 
         save_path = os.path.join(
             Params.result_dir, '{}_img_mixed.png'.format(str(i).zfill(5)))
-        plt.imsave(save_path, img_mixed/img_mixed.max())
+        plt.imsave(save_path, img_mixed/img_mixed.max(), cmap='gray')
 
         save_path = os.path.join(
             Params.result_dir, '{}_mnist_output_1.png'.format(str(i).zfill(5)))
-        plt.imsave(save_path, z_output)
+        plt.imsave(save_path, z_output, cmap='gray')
 
         save_path = os.path.join(
             Params.result_dir, '{}_mnist_output_2.png'.format(str(i).zfill(5)))
-        plt.imsave(save_path, x_output)
+        plt.imsave(save_path, x_output, cmap='gray')
+
+        save_path = os.path.join(
+            Params.result_dir, '{}_mnist_true_1.png'.format(str(i).zfill(5)))
+        plt.imsave(save_path, img_mnist_1, cmap='gray')
+
+        save_path = os.path.join(
+            Params.result_dir, '{}_mnist_true_2.png'.format(str(i).zfill(5)))
+        plt.imsave(save_path, img_mnist_2, cmap='gray')
 
         print('processing %d-th image...' % i)
 

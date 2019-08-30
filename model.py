@@ -3,16 +3,13 @@ The test code for:
 "Adversarial Training for Solving Inverse Problems"
 using Tensorflow.
 
-Author: Zhengxia Zou (zzhengxi@umich.edu)
-
 With this project, you can train a model to solve the following
 inverse problems:
 - on MNIST and CIFAR-10 datasets for separating superimposed images.
 - image denoising on MNIST
 - remove speckle and streak noise in CAPTCHAs
-All the above tasks are trained without any help of pair-wise supervision.
+All the above tasks are trained w/ or w/o the help of pair-wise supervision.
 
-Jun., 2019
 """
 
 import tensorflow as tf
@@ -316,3 +313,19 @@ def initilize_solvers(D1_loss, D2_loss, G_loss, D_steps, G_steps):
 
     return D1_solver, D2_solver, G_solver, clip_D1, clip_D2
 
+
+
+def cpt_paired_loss(X_gen, X1, Y):
+
+    if Params.task_name is 'unmixing_mnist_mnist':
+        # To avoid ambiguity, when performing mnist-mnist
+        # umixing, the residuals are computed individually
+        # on two different components, and then the gradient
+        # is computed based on their minimum value.
+        loss_1 = 1000.*tf.reduce_mean(tf.abs(X_gen-X1))
+        loss_2 = 1000.*tf.reduce_mean(tf.abs(X_gen-(Y-X1)))
+        L2loss = tf.minimum(loss_1, loss_2)
+    else:
+        L2loss = 1000. * tf.reduce_mean(tf.abs(X_gen - X1))
+
+    return L2loss

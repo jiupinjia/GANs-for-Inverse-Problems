@@ -1,5 +1,5 @@
 # GANs for Solving Inverse Problems
-Tensorflow implementation for: "Adversarial Training for Solving Inverse Problems".
+Tensorflow implementation for: "Adversarial Training for Solving Inverse Problems". 
 
 Inverse problems are a group of important mathematical problems which aim to estimate the causal factors (e.g., the unknown source data x and parameters z) from a set of observations. Most of the recent approaches consider the inverse problem as a prediction of the source data x based on the observation y with the help of pair-wise training supervision while ignoring the physics behind. We re-examine the inverse problem under a totally different point of view, i.e. instead of predicting x directly from y, we learn to predict the parameters z under an adversarial training paradigm so that to shed light on the causal relationship with a clear physical signiﬁcance. 
 
@@ -8,16 +8,7 @@ With this project, you can train a model to solve the following inverse problems
 - Image denoising on MNIST
 - Removing speckle and streak noise in CAPTCHAs
 
-All the above tasks are trained without any help of pair-wise supervision. For more information of this project, please refer to our paper.
-
-
-
-## A video demo:
-YouTube video: [Adversarial Training for Solving Inverse Problems](https://www.youtube.com/watch?v=_F8-cyTPENw)
-
-<a href="http://www.youtube.com/watch?feature=player_embedded&v=_F8-cyTPENw
-" target="_blank"><img src="imgs/video-demo.png" 
-alt="IMAGE ALT TEXT HERE" width="720" height="270" border="10" /></a>
+All the above tasks can be trained w/ or w/o the help of pair-wise supervision. For more information of this project, please refer to our paper.
 
 
 ## Prerequisites
@@ -98,9 +89,4 @@ Some example results of image deraining with different methods on the [Image Der
 
 ![](imgs/results-derain.jpg)
 
-
-
-
-
-_"keep Calm and Don't Overfit."_
 
