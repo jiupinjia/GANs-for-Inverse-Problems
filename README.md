@@ -1,5 +1,5 @@
 # GANs for Solving Inverse Problems
-Tensorflow implementation for: "Adversarial Training for Solving Inverse Problems". The code was written by [Zhengxia Zou](http://www-personal.umich.edu/~zzhengxi/) (zzhengxi@umich.edu).
+Tensorflow implementation for: "Adversarial Training for Solving Inverse Problems".
 
 Inverse problems are a group of important mathematical problems which aim to estimate the causal factors (e.g., the unknown source data x and parameters z) from a set of observations. Most of the recent approaches consider the inverse problem as a prediction of the source data x based on the observation y with the help of pair-wise training supervision while ignoring the physics behind. We re-examine the inverse problem under a totally different point of view, i.e. instead of predicting x directly from y, we learn to predict the parameters z under an adversarial training paradigm so that to shed light on the causal relationship with a clear physical signiﬁcance. 
 
